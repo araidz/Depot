@@ -65,10 +65,14 @@ data sources, zero Xcode, one `brew install`.
 
 ```sh
 brew tap araidz/depot https://github.com/araidz/Depot
-brew install depot
+brew install araidz/depot/depot
 ```
 
-`brew` pulls in `aria2` and Python automatically. Update later with `brew upgrade depot`.
+The fully-qualified name (`araidz/depot/depot`) is required because Homebrew's
+core repository also ships an unrelated formula named `depot`.
+
+`brew` pulls in `aria2` and Python automatically. Update later with
+`brew upgrade araidz/depot/depot`.
 
 ### From source
 
