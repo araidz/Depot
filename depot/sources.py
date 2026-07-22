@@ -28,33 +28,26 @@ MACOS_NAMES: dict[int, str] = {
 
 IPSW_DEVICE_IDS = ["Macmini9,1", "MacBookAir10,1", "MacBookPro17,1", "iMac21,1"]
 
-SUCATALOG_URL = (
-    "https://swscan.apple.com/content/catalogs/others/"
-    "index-14-13-12-10.16-10.15-10.14-10.13-10.12-10.11-10.10-10.9-"
-    "mountainlion-lion-snowleopard-leopard.merged-1.sucatalog"
-)
+# Apple serves one merged catalog per seed program. The leading major in the
+# chain is fixed (currently "14") and the same catalog carries every newer OS
+# too — the Release chain below returns Tahoe (26) installers. Seed catalogs
+# just insert a program token (14seed / 14beta / 14customerseed) after "index-".
+_CATALOG_BASE = "https://swscan.apple.com/content/catalogs/others/index-"
+_CHAIN = ("14-13-12-10.16-10.15-10.14-10.13-10.12-10.11-10.10-10.9-"
+          "mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
+
+SUCATALOG_URL = _CATALOG_BASE + _CHAIN
 
 # ---------------------------------------------------------------------------
 # Seed catalogs — beta / developer / customer seed programs.
 # ---------------------------------------------------------------------------
 
-_SEED_BASE = (
-    "https://swscan.apple.com/content/catalogs/others/"
-    "index-{prefix}-{versions}-mountainlion-lion-snowleopard-leopard"
-    ".merged-1.sucatalog"
-)
-_VERSIONSUFFIX = "10.16-10.15-10.14-10.13-10.12-10.11-10.10-10.9"
-
 _CATALOG_URLS: dict[str, str] = {
     "Release": SUCATALOG_URL,
+    "Developer Seed": _CATALOG_BASE + "14seed-" + _CHAIN,
+    "Public Beta": _CATALOG_BASE + "14beta-" + _CHAIN,
+    "Customer Seed": _CATALOG_BASE + "14customerseed-" + _CHAIN,
 }
-
-# Build seed catalog URLs for macOS 15 (Sequoia) through 26 (Tahoe)
-for _v in range(26, 14, -1):
-    _tail = f"{_v}-" + _VERSIONSUFFIX if _v >= 15 else _VERSIONSUFFIX
-    _CATALOG_URLS[f"Developer Seed ({_v})"] = _SEED_BASE.format(prefix=f"{_v}seed", versions=_tail)
-    _CATALOG_URLS[f"Public Beta ({_v})"] = _SEED_BASE.format(prefix=f"{_v}beta", versions=_tail)
-    _CATALOG_URLS[f"Customer Seed ({_v})"] = _SEED_BASE.format(prefix=f"{_v}customerseed", versions=_tail)
 
 CATALOG_NAMES = list(_CATALOG_URLS.keys())
 
@@ -307,8 +300,8 @@ def selftest() -> None:
     assert inst.name, "missing name"
     print(f"OK — {len(insts)} installers, latest: {inst.name} {inst.version} ({inst.build})")
 
-    print("installers(catalog='Developer Seed (26)')...", end=" ", flush=True)
-    beta_insts = installers(catalog="Developer Seed (26)")
+    print("installers(catalog='Developer Seed')...", end=" ", flush=True)
+    beta_insts = installers(catalog="Developer Seed")
     if beta_insts:
         bi = beta_insts[0]
         print(f"OK — {len(beta_insts)} beta installers, latest: {bi.name} {bi.version} ({bi.build})")
