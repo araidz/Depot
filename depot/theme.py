@@ -35,10 +35,16 @@ BLOCK = "█"
 TRACK = "░"
 
 # -- logo -------------------------------------------------------------------
+# DEPOT wordmark (half-block font) + a little crate/box motif to the right.
 LOGO_LINES: list[str] = [
-    "▄▀▄ █▄▀ █   █▀▄ ▀▄▀",
-    "█▀█ █ █ █▄▄ █▀▄  █ ",
+    "█▀▄ █▀▀ █▀▄ █▀█ ▀█▀",
+    "█▄▀ █▄▄ █▀▀ █▄█  █ ",
 ]
+LOGO_MOTIF: list[str] = [
+    "▛▀▜",
+    "▙▄▟",
+]
+CRATE_COLOR = "#c8862f"  # wooden-crate amber for the box motif
 
 # -- color math --------------------------------------------------------------
 
@@ -58,6 +64,17 @@ def lerp_hex(a: str, b: str, t: float) -> str:
 
 def progress_ramp(t: float, deep: str, mid: str, bright: str) -> str:
     return lerp_hex(deep, mid, t / 0.5) if t <= 0.5 else lerp_hex(mid, bright, (t - 0.5) / 0.5)
+
+
+def logo_color(t: float) -> str:
+    """Diagonal amber gradient across the wordmark: cream → gold → deep."""
+    if t < 0.15:
+        return lerp_hex(WHITE, BRIGHT, t / 0.15)
+    if t < 0.4:
+        return lerp_hex(BRIGHT, ACCENT, (t - 0.15) / 0.25)
+    if t < 0.7:
+        return lerp_hex(ACCENT, DEEP, (t - 0.4) / 0.3)
+    return lerp_hex(DEEP, SHADE, (t - 0.7) / 0.3)
 
 
 # -- sheen (cosine-bell sweep) ------------------------------------------------

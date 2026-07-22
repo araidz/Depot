@@ -475,16 +475,14 @@ class App:
         if self.filter_text:
             q = self.filter_text.lower()
             items = [f for f in items if q in f.name.lower() or q in f.version or q in f.build.lower()]
-        items = self._sort_items(items)
-        return items
+        return _cluster_by_name(self._sort_items(items))
 
     def visible_installers(self) -> list[Installer]:
         items = self.installers
         if self.filter_text:
             q = self.filter_text.lower()
             items = [i for i in items if q in i.name.lower() or q in i.version or q in i.build.lower()]
-        items = self._sort_items(items)
-        return items
+        return _cluster_by_name(self._sort_items(items))
 
     def _sort_items(self, items: list) -> list:
         if self.sort == SORT_SIZE:
@@ -760,14 +758,85 @@ def _window(sel: int, total: int, h: int) -> int:
     return max(0, min(sel - h // 2, total - h))
 
 
+def _cluster_by_name(items: list) -> list:
+    """Cluster items so all of one macOS release sit together, groups ordered
+    by first appearance in the already-sorted list. Keeps selection indexing
+    aligned with what the grouped view draws."""
+    groups: dict[str, list] = {}
+    order: list[str] = []
+    for it in items:
+        if it.name not in groups:
+            groups[it.name] = []
+            order.append(it.name)
+        groups[it.name].append(it)
+    out: list = []
+    for name in order:
+        out.extend(groups[name])
+    return out
+
+
+def _grouped_rows(items: list, sel: int, avail: int) -> list:
+    """Turn a name-clustered item list into a windowed list of display rows.
+
+    Rows are ("header", name, count) or ("item", item_index, obj). The window
+    is centred on the selection; if it starts mid-group, the group's header is
+    kept sticky at the top so you always know which release you're in.
+    """
+    counts: dict[str, int] = {}
+    for it in items:
+        counts[it.name] = counts.get(it.name, 0) + 1
+
+    display: list = []
+    sel_di = 0
+    prev = None
+    for idx, obj in enumerate(items):
+        if obj.name != prev:
+            display.append(("header", obj.name, counts[obj.name]))
+            prev = obj.name
+        if idx == sel:
+            sel_di = len(display)
+        display.append(("item", idx, obj))
+
+    if len(display) <= avail:
+        return display
+    start = max(0, min(sel_di - avail // 2, len(display) - avail))
+    win = display[start:start + avail]
+    if win and win[0][0] == "item" and start > 0:
+        obj = win[0][2]
+        win = [("header", obj.name, counts[obj.name])] + win[1:]
+    return win
+
+
+def _group_header_line(name: str, count: int, width: int) -> str:
+    head = f"▸ {name}"
+    meta = f"{count} version{'s' if count != 1 else ''}"
+    lead = pad(dtrunc(head, max(0, width - dwidth(meta) - 1)), width - dwidth(meta) - 1)
+    return style(lead, T.ACCENT, bold=True) + " " + style(meta, T.ALT, dim=True)
+
+
+def _logo_lines() -> list[str]:
+    """DEPOT wordmark with a diagonal amber gradient + crate motif to its right."""
+    out = []
+    rows = len(T.LOGO_LINES)
+    for row, line in enumerate(T.LOGO_LINES):
+        chars = list(line)
+        last = max(1, len(chars) - 1)
+        ty = row / max(1, rows - 1)
+        seg = ""
+        for i, ch in enumerate(chars):
+            if ch == " ":
+                seg += " "
+            else:
+                seg += style(ch, T.logo_color(((i / last) + ty) / 2), bold=True)
+        motif = T.LOGO_MOTIF[row] if row < len(T.LOGO_MOTIF) else ""
+        out.append(seg + "  " + style(motif, T.CRATE_COLOR, bold=True))
+    return out
+
+
 def render_header(cols: int) -> list[str]:
-    lines: list[str] = []
-    # logo — subtitle only on the second line
     tagline = "macOS installer & firmware downloader"
-    lines.append(style(T.LOGO_LINES[0], T.ACCENT, bold=True))
-    lines.append(style(T.LOGO_LINES[1], T.ACCENT, bold=True) + "  " +
-                 style(tagline, T.ALT, dim=True))
-    # rule
+    logo = _logo_lines()
+    lines = [logo[0], logo[1] + "  " + style(tagline, T.ALT, dim=True)]
     lines.append(style("─" * cols, T.RULE))
     return lines
 
@@ -792,9 +861,11 @@ def render_rail(app: App, height: int) -> list[str]:
     if app.filter_text:
         lines[-3] = cell(f"filter: {app.filter_text}", RAIL_W, color=T.WARN, dim=True)
     if app.pane == PANE_INSTALLERS:
-        cat_short = app.catalog.split("(")[0].strip()[:10]
-        lines[-2] = cell(f"catalog:", RAIL_W, color=T.ALT, dim=True)
-        lines[-1] = cell(f" {cat_short}", RAIL_W, color=T.ACCENT)
+        cat_short = app.catalog.split("(")[0].strip()[:12]
+        beta = app.catalog != "Release"
+        lines[-2] = cell("catalog (c):", RAIL_W, color=T.ALT, dim=True)
+        lines[-1] = cell(f" {cat_short}", RAIL_W,
+                         color=T.WARN if beta else T.ACCENT, bold=beta)
     else:
         lines[-1] = cell(f"sort: {app.sort}", RAIL_W, color=T.ALT, dim=True)
 
@@ -825,13 +896,13 @@ def render_firmware_table(app: App, width: int, height: int) -> list[str]:
 
     lines = [style("─" * width, T.RULE), hdr, style("─" * width, T.RULE)]
 
-    # visible window
+    # grouped, windowed rows
     avail = height - len(lines) - 1  # leave room for footer hint
-    start = _window(app.sel, len(items), avail)
-    visible = items[start:start + avail]
-
-    for i, fw in enumerate(visible):
-        idx = start + i
+    for kind, a, b in _grouped_rows(items, app.sel, avail):
+        if kind == "header":
+            lines.append(_group_header_line(a, b, width))
+            continue
+        idx, fw = a, b
         selected = idx == app.sel
         color = T.TEXT if selected else T.ALT
         prefix = f"{T.PTR} " if selected else "   "
@@ -872,11 +943,11 @@ def render_installer_table(app: App, width: int, height: int) -> list[str]:
     lines = [style("─" * width, T.RULE), hdr, style("─" * width, T.RULE)]
 
     avail = height - len(lines) - 1
-    start = _window(app.sel, len(items), avail)
-    visible = items[start:start + avail]
-
-    for i, inst in enumerate(visible):
-        idx = start + i
+    for kind, a, b in _grouped_rows(items, app.sel, avail):
+        if kind == "header":
+            lines.append(_group_header_line(a, b, width))
+            continue
+        idx, inst = a, b
         selected = idx == app.sel
         color = T.TEXT if selected else T.ALT
         prefix = f"{T.PTR} " if selected else "   "

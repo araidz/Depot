@@ -1,8 +1,8 @@
 # Depot
 
 ```
-▄▀▄ █▄▀ █   █▀▄ ▀▄▀
-█▀█ █ █ █▄▄ █▀▄  █ 
+█▀▄ █▀▀ █▀▄ █▀█ ▀█▀  ▛▀▜
+█▄▀ █▄▄ █▀▀ █▄█  █   ▙▄▟
 ```
 
 ![macOS](https://img.shields.io/badge/macOS-000?logo=apple&logoColor=white)
@@ -21,18 +21,21 @@ data sources, zero Xcode, one `brew install`.
 ## Preview
 
 ```
-▄▀▄ █▄▀ █   █▀▄ ▀▄▀
-█▀█ █ █ █▄▄ █▀▄  █   macOS installer & firmware downloader
-────────────────────────────────────────────────────────────────────
-❯ Firmwares (73)    Name                    Version Build   Size
-  Installers (24)   ─────────────────────────────────────────────
-  Downloads (0)   ❯ Tahoe                    26.5.2 25F84   18.4 GB
-                      Tahoe                    26.5.1 25F80   18.4 GB
-                      Tahoe                    26.5   25F71   18.4 GB
-                      Sequoia                  15.5   25A354  13.0 GB
-                      Sonoma                   14.7   24A335  12.0 GB
+█▀▄ █▀▀ █▀▄ █▀█ ▀█▀  ▛▀▜
+█▄▀ █▄▄ █▀▀ █▄█  █   ▙▄▟  macOS installer & firmware downloader
+──────────────────────────────────────────────────────────────────────
+❯ Firmwares (73)    Name              Version Build   Size
+  Installers (24)   ────────────────────────────────────────────
+  Downloads (0)     ▸ Tahoe                              3 versions
+                  ❯ Tahoe             26.5.2  25F84   18.4 GB
+                    Tahoe             26.5.1  25F80   18.4 GB
+                    Tahoe             26.5    25F71   18.4 GB
+                    ▸ Sequoia                            1 version
+                    Sequoia           15.5    25A354  13.0 GB
+                    ▸ Sonoma                             1 version
+                    Sonoma            14.7    24A335  12.0 GB
 
-  ↑↓ move · Enter details · d download · S sort · e export · / filter
+  catalog (c): Release · type to filter · S sort · e export · ? help
 ```
 
 ## Features
@@ -40,8 +43,12 @@ data sources, zero Xcode, one `brew install`.
 - **Browse firmwares & installers** — lists all available macOS versions from
   Apple Silicon firmwares (`.ipsw`) to ready-to-run installers
   (`InstallAssistant.pkg`), showing name, version, build, date, and size.
-- **Beta catalogs** — cycle through Release, Developer Seed, Public Beta, and
-  Customer Seed catalogs with `c` (Installers pane).
+- **Grouped by release** — versions are categorised under their macOS release
+  (Tahoe, Sequoia, Sonoma…) with a sticky group header, instead of one long
+  flat list.
+- **Beta catalogs** — press `c` in the Installers pane to cycle Release →
+  Developer Seed → Public Beta → Customer Seed. The current catalog shows at the
+  bottom of the left rail (highlighted when a beta is active).
 - **Flash to USB** — format a USB drive and create a bootable macOS installer
   with `f` (Installers pane). Supports any external USB drive.
 - **Download with aria2** — multi-connection parallel download, automatic resume
