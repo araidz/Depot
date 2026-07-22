@@ -2,7 +2,7 @@ class Depot < Formula
   desc "Lightweight macOS installer & firmware downloader TUI"
   homepage "https://github.com/araidz/Depot"
   url "https://github.com/araidz/Depot/archive/refs/tags/v0.1.2.tar.gz"
-  sha256 "PLACEHOLDER"
+  sha256 "3439d30fa252cf8790be045a5781c8f79055c7508f61dc595ed657faf09a3187"
   license "MIT"
 
   depends_on "aria2"
