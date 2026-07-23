@@ -3,7 +3,7 @@
 HTTP-only adaptation of Trawl's aria2.py — no magnet/torrent features.
 Downloads macOS firmware .ipsw and installer .pkg files via aria2 with
 SHA-1 verification, multi-connection parallel download, and session resume.
-No third-party packages. Selftest: python3 -m depot.download
+No third-party packages. Selftest: python3 -m slipway.download
 """
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ from pathlib import Path
 from shutil import which
 
 USER_CONF = Path.home() / ".aria2" / "aria2.conf"
-STATE_DIR = Path.home() / "Library" / "Application Support" / "Depot"
+STATE_DIR = Path.home() / "Library" / "Application Support" / "Slipway"
 
 
 class Aria2Error(Exception):
@@ -244,7 +244,7 @@ class Aria2:
     def _call(self, method: str, params: list | None = None):
         payload = {
             "jsonrpc": "2.0",
-            "id": "depot",
+            "id": "slipway",
             "method": method,
             "params": [f"token:{self.secret}", *(params or [])],
         }
@@ -292,7 +292,7 @@ def selftest() -> None:
     import tempfile
     import hashlib as _hl
     import urllib.request as _ur
-    tmp = Path(tempfile.mkdtemp(prefix="depot-selftest-"))
+    tmp = Path(tempfile.mkdtemp(prefix="slipway-selftest-"))
     eng = Aria2(conf=None, state_dir=tmp)
     with eng:
         ver = eng._call("aria2.getVersion")

@@ -1,6 +1,6 @@
 """Fetch macOS firmware & installer metadata from Apple and ipsw.me.
 
-No third-party packages. Selftest: python3 -m depot.sources
+No third-party packages. Selftest: python3 -m slipway.sources
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ def catalog_url(name: str) -> str:
 
 def fetch(url: str, timeout: int = 30) -> bytes:
     """Fetch a URL with timeout and one retry. Decompresses gzip if needed."""
-    headers = {"User-Agent": "Depot/0.1 (macOS; +https://github.com/araidz/Depot)"}
+    headers = {"User-Agent": "Slipway/0.1 (macOS; +https://github.com/araidz/Slipway)"}
     req = urllib.request.Request(url, headers=headers)
     last_err: Exception | None = None
     for _ in range(2):

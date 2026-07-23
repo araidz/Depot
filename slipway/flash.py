@@ -113,7 +113,7 @@ def _find_createinstallmedia() -> str:
             return matches[0]
     raise FlashError(
         "createinstallmedia not found.\n"
-        "Download a macOS installer first (depot → d to download, then install the .pkg)."
+        "Download a macOS installer first (slipway → d to download, then install the .pkg)."
     )
 
 
@@ -130,7 +130,7 @@ def _find_installer_app() -> str:
             return matches[0]
     raise FlashError(
         "No Install macOS app found in /Applications.\n"
-        "Download a macOS installer first (depot → d to download, then install the .pkg)."
+        "Download a macOS installer first (slipway → d to download, then install the .pkg)."
     )
 
 

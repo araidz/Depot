@@ -1,4 +1,4 @@
-"""Depot entry point + run loop.
+"""Slipway entry point + run loop.
 
 Single-threaded: poll stdin with a frame-interval timeout, dispatch keys,
 drain aria2 every 500ms, full-redraw. Data loads in a background thread on
@@ -16,10 +16,10 @@ from . import __version__
 from .download import Aria2, Aria2Error
 from .tui import App, Terminal, render
 
-HELP = ("depot — macOS installer & firmware downloader.\n"
-        "  depot               start the TUI browser\n"
-        "  depot --version     show version\n"
-        "  depot --help        show this help")
+HELP = ("slipway — macOS installer & firmware downloader.\n"
+        "  slipway               start the TUI browser\n"
+        "  slipway --version     show version\n"
+        "  slipway --help        show this help")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -29,11 +29,11 @@ def main(argv: list[str] | None = None) -> int:
             print(HELP)
             return 0
         if a in ("-V", "--version"):
-            print(f"depot {__version__}")
+            print(f"slipway {__version__}")
             return 0
 
     if not (sys.stdin.isatty() and sys.stdout.isatty()):
-        print("depot needs an interactive terminal.")
+        print("slipway needs an interactive terminal.")
         return 1
 
     eng = Aria2()

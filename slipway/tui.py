@@ -1,4 +1,4 @@
-"""Raw-ANSI terminal UI for Depot: state, render, input. No third-party deps.
+"""Raw-ANSI terminal UI for Slipway: state, render, input. No third-party deps.
 
 Full-redraw renderer (truecolor) with a warm amber theme. Left-rail navigation
 between Firmwares / Installers / Downloads, table views, sheen progress bars.
@@ -740,7 +740,7 @@ class App:
         for d in downloads:
             was = prev.get(d.gid)
             if d.status == "complete" and was is not None and was != "complete":
-                notify("Depot", f"download complete: {d.name}")
+                notify("Slipway", f"download complete: {d.name}")
         self.downloads = downloads
 
 
@@ -815,7 +815,7 @@ def _group_header_line(name: str, count: int, width: int) -> str:
 
 
 def _logo_lines() -> list[str]:
-    """DEPOT wordmark with a diagonal amber gradient + crate motif to its right."""
+    """SLIPWAY wordmark with a diagonal amber gradient + crate motif to its right."""
     out = []
     rows = len(T.LOGO_LINES)
     for row, line in enumerate(T.LOGO_LINES):
@@ -1095,7 +1095,7 @@ def render_help(width: int, height: int) -> list[str]:
         ("q", "quit"),
     ]
 
-    lines = [style("  Depot — Keyboard Shortcuts", T.ACCENT, bold=True), ""]
+    lines = [style("  Slipway — Keyboard Shortcuts", T.ACCENT, bold=True), ""]
     for key, action in help_text:
         lines.append(f"  {cell(key, 20, color=T.ACCENT)} {style(action, T.TEXT)}")
     lines.append("")

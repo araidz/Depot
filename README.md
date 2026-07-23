@@ -1,8 +1,8 @@
-# Depot
+# Slipway
 
 ```
-█▀▄ █▀▀ █▀▄ █▀█ ▀█▀  ▛▀▜
-█▄▀ █▄▄ █▀▀ █▄█  █   ▙▄▟
+█▀▀ █   ▀█▀ █▀▄ █ █ █▀█ █ █  ▛▀▜
+▄▄█ █▄▄ ▄█▄ █▀▀ █▀█ █▀█  █   ▙▄▟
 ```
 
 ![macOS](https://img.shields.io/badge/macOS-000?logo=apple&logoColor=white)
@@ -21,8 +21,8 @@ data sources, zero Xcode, one `brew install`.
 ## Preview
 
 ```
-█▀▄ █▀▀ █▀▄ █▀█ ▀█▀  ▛▀▜
-█▄▀ █▄▄ █▀▀ █▄█  █   ▙▄▟  macOS installer & firmware downloader
+█▀▀ █   ▀█▀ █▀▄ █ █ █▀█ █ █  ▛▀▜
+▄▄█ █▄▄ ▄█▄ █▀▀ █▀█ █▀█  █   ▙▄▟  macOS installer & firmware downloader
 ──────────────────────────────────────────────────────────────────────
 ❯ Firmwares (73)    Name              Version Build   Size
   Installers (24)   ────────────────────────────────────────────
@@ -71,29 +71,25 @@ data sources, zero Xcode, one `brew install`.
 ### Homebrew
 
 ```sh
-brew tap araidz/depot https://github.com/araidz/Depot
-brew install araidz/depot/depot
+brew install araidz/tap/slipway
 ```
 
-The fully-qualified name (`araidz/depot/depot`) is required because Homebrew's
-core repository also ships an unrelated formula named `depot`.
-
 `brew` pulls in `aria2` and Python automatically. Update later with
-`brew upgrade araidz/depot/depot`.
+`brew upgrade araidz/tap/slipway`.
 
 ### From source
 
 ```sh
-git clone https://github.com/araidz/Depot.git && cd Depot
-sh build.sh                                       # -> dist/depot (one self-contained file)
-ln -sf "$PWD/dist/depot" /opt/homebrew/bin/depot  # or anywhere on your PATH
+git clone https://github.com/araidz/Slipway.git && cd Slipway
+sh build.sh                                       # -> dist/slipway (one self-contained file)
+ln -sf "$PWD/dist/slipway" /opt/homebrew/bin/slipway  # or anywhere on your PATH
 ```
 
-Needs `aria2` (`brew install aria2`). Or run without building: `python3 -m depot`.
+Needs `aria2` (`brew install aria2`). Or run without building: `python3 -m slipway`.
 
 ## Usage
 
-Depot opens with the Firmwares list. Browse with `↑↓`, press Enter for details,
+Slipway opens with the Firmwares list. Browse with `↑↓`, press Enter for details,
 press `d` to download. Switch panes with `Tab`.
 
 ### Keyboard Shortcuts
@@ -133,15 +129,15 @@ press `d` to download. Switch panes with `Tab`.
 
 ```sh
 # Start the TUI browser
-depot
+slipway
 
 # Show version
-depot --version
+slipway --version
 ```
 
 ## How it works
 
-Depot fetches firmware metadata from the [IPSW Downloads API](https://ipswdownloads.docs.apiary.io)
+Slipway fetches firmware metadata from the [IPSW Downloads API](https://ipswdownloads.docs.apiary.io)
 and installer metadata from Apple's Software Update Catalogs (`.sucatalog`).
 Both Release and beta catalogs (Developer Seed, Public Beta, Customer Seed) are
 supported — press `c` in the Installers pane to cycle between them.
@@ -155,12 +151,12 @@ external USB drives via `diskutil`, erases the selected drive as Mac OS Extended
 (Journaled), copies the installer using Apple's `createinstallmedia`, and
 validates the result.
 
-State lives in `~/Library/Application Support/Depot/`:
+State lives in `~/Library/Application Support/Slipway/`:
 `aria2-session.txt` (private session for resume).
 
 ## Privacy
 
-Your files stay on your disk; nothing routes through a central server. Depot
+Your files stay on your disk; nothing routes through a central server. Slipway
 only talks to Apple's public APIs (ipsw.me, swscan.apple.com) and downloads
 via aria2.
 
@@ -174,7 +170,7 @@ via aria2.
 - [IPSW Downloads API](https://ipswdownloads.docs.apiary.io) — firmware
   metadata
 
-No third-party Python packages are used; Depot is an independent stdlib-only
+No third-party Python packages are used; Slipway is an independent stdlib-only
 implementation.
 
 ## License

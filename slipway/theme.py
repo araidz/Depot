@@ -1,6 +1,6 @@
 """The single look knob: palette, glyphs, logo, and the sheen/ramp math.
 
-Amber/gold palette for Depot — the warmth of "golden installer" against the
+Amber/gold palette for Slipway — the warmth of "golden installer" against the
 violet of Trawl. Change the constants here; nothing else touches color.
 """
 
@@ -35,10 +35,10 @@ BLOCK = "█"
 TRACK = "░"
 
 # -- logo -------------------------------------------------------------------
-# DEPOT wordmark (half-block font) + a little crate/box motif to the right.
+# SLIPWAY wordmark (half-block font) + a little crate/box motif to the right.
 LOGO_LINES: list[str] = [
-    "█▀▄ █▀▀ █▀▄ █▀█ ▀█▀",
-    "█▄▀ █▄▄ █▀▀ █▄█  █ ",
+    "█▀▀ █   ▀█▀ █▀▄ █ █ █▀█ █ █",
+    "▄▄█ █▄▄ ▄█▄ █▀▀ █▀█ █▀█  █ ",
 ]
 LOGO_MOTIF: list[str] = [
     "▛▀▜",
